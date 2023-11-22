@@ -1,0 +1,32 @@
+{% extends "base.html.twig" %}
+
+{% block title %}
+    <div class="container mt-5 text-center">
+        <h1 class="display-4 margin-bottom">Issues</h1>
+    </div>
+{% endblock %}
+
+{% block body %}
+    <div class="container mt-5 text-center">
+        <form class="ml-4 mr-4 p-3" method="post">
+            <div class="form-group">
+                <input type="text" class="form-control" name="search" placeholder="Enter issue..."><br>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+
+        <div class="container">
+            <ul class="list-group">
+                {% for issue in issues %}
+                    <li class="list-group-item">
+                        <strong> Title: {{ issue.title }}</strong>
+                        <p> Url: {{ issue.html_url }}</p>
+                        <p> User: {{ issue.user.url }}</p>
+{#                        <p> Body: {{ issue.body }}</p>#}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+    </div>
+{% endblock %}

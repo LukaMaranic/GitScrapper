@@ -1,0 +1,46 @@
+{% extends "base.html.twig" %}
+
+{% block title %}
+    <div class="container mt-5 text-center">
+        <h1 class="display-4 margin-bottom">GIT Hub API</h1>
+    </div>
+{% endblock %}
+
+{% block body %}
+    <!-- Main Content -->
+    <div class="container mt-5 text-center">
+
+        <!-- Table of Contents -->
+        <div class="row justify-content-center">
+            <div class="col-md-4">
+                <div class="list-group" id="list-tab" role="tablist">
+                    <a class="list-group-item list-group-item-action" id="list-section1-list" data-bs-toggle="list" href="#section1" role="tab" aria-controls="section1" style="color: #333;">Issues</a>
+                    <a class="list-group-item list-group-item-action" id="list-section2-list" data-bs-toggle="list" href="#section2" role="tab" aria-controls="section2" style="color: #333;">User</a>
+                    <a class="list-group-item list-group-item-action" id="list-section3-list" data-bs-toggle="list" href="#section3" role="tab" aria-controls="section3" style="color: #333;">Repositories</a>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="tab-content" id="nav-tabContent">
+                    <!-- Section 1 -->
+                    <div class="tab-pane fade" id="section1" role="tabpanel" aria-labelledby="list-section1-list">
+                        <h2><a href="/issues">Issues</a></h2>
+                        <p>Use the REST API to manage issues and pull requests.</p>
+                    </div>
+
+                    <!-- Section 2 -->
+                    <div class="tab-pane fade" id="section2" role="tabpanel" aria-labelledby="list-section2-list">
+                        <h2><a href="/user">User</a></h2>
+                        <p>Use the REST API to search for specific user on GitHub.</p>
+                    </div>
+
+                    <!-- Section 3 -->
+                    <div class="tab-pane fade" id="section3" role="tabpanel" aria-labelledby="list-section3-list">
+                        <h2><a href="/repositories">Repositories</a></h2>
+                        <p>Use the REST API to search for specific repositories on GitHub.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

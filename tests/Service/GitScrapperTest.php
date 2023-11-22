@@ -47,6 +47,6 @@ class GitScrapperTest extends TestCase
 
         $gitScrapper->scrape();
 
-        $this->assertTrue(true);
+        $this->assertTrue(false);
     }
 }

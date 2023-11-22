@@ -1,0 +1,31 @@
+{% extends "base.html.twig" %}
+
+{% block title %}
+    <div class="container mt-5 text-center">
+        <h1 class="display-4 margin-bottom">Repositories</h1>
+    </div>
+{% endblock %}
+
+{% block body %}
+    <div class="container mt-5 text-center">
+        <form class="ml-4 mr-4 p-3" method="post">
+            <div class="form-group">
+                <input type="text" class="form-control" name="search" placeholder="Enter repository..."><br>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+
+        <div class="container">
+            <ul class="list-group">
+                {% for repository in repositories %}
+                    <li class="list-group-item">
+                        <strong> Full name: {{ repository.full_name }}</strong>
+                        <p> Url: {{ repository.html_url }}</p>
+                        <p> Owner url: {{ repository.owner.html_url }}</p>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+    </div>
+{% endblock %}
