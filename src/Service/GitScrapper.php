@@ -29,7 +29,6 @@ class GitScrapper extends AbstractWebScraper
      */
     function scrape(): void
     {
-
         $response = $this->client->request(
             'GET',
             'https://api.github.com/search/issues?q=' . $this->label . '&per_page=100',
