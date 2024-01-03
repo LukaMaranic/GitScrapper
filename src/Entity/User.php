@@ -20,6 +20,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
 
+    /**
+     * @var array<int, string>
+     */
     #[ORM\Column]
     private array $roles = [];
 
@@ -29,6 +32,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
+    /**
+     * @var boolean
+     */
     #[ORM\Column(type: 'boolean')]
     private $isVerified = false;
 
@@ -74,6 +80,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return array_unique($roles);
     }
 
+    /**
+     * @param array<int,string> $roles
+     * @return $this
+     */
     public function setRoles(array $roles): static
     {
         $this->roles = $roles;
@@ -84,7 +94,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @see PasswordAuthenticatedUserInterface
      */
-    public function getPassword(): string
+    public function getPassword(): string|null
     {
         return $this->password;
     }
@@ -132,5 +142,4 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->confirmationToken = $confirmationToken;
     }
-
 }

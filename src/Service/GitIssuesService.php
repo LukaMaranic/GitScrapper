@@ -13,6 +13,15 @@ class GitIssuesService implements GitSearchInterface
     {
     }
 
+    /**
+     * @param string|null $label
+     * @return mixed
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
+     */
     public function searchIssues(string $label = null)
     {
         $response = $this->client->request(
@@ -26,7 +35,16 @@ class GitIssuesService implements GitSearchInterface
         return $response->toArray()['items'];
     }
 
-    public function searchUser(string $user = null)
+    /**
+     * @param string|null $user
+     * @return array<mixed>
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
+     */
+    public function searchUser(string $user = null): array
     {
         $response = $this->client->request(
             'GET',
@@ -39,6 +57,15 @@ class GitIssuesService implements GitSearchInterface
         return $response->toArray();
     }
 
+    /**
+     * @param string|null $repository
+     * @return mixed
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
+     */
     public function searchRepositories(string $repository = null)
     {
         $response = $this->client->request(
@@ -52,6 +79,14 @@ class GitIssuesService implements GitSearchInterface
         return $response->toArray()['items'];
     }
 
+    /**
+     * @return array<mixed>
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
+     */
     public function getAuthenticatedUserRepos(): array
     {
         $response = $this->client->request(

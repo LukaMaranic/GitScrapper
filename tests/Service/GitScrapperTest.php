@@ -16,13 +16,14 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 class GitScrapperTest extends TestCase
 {
     /**
+     * @returns void
      * @throws TransportExceptionInterface
      * @throws ServerExceptionInterface
      * @throws RedirectionExceptionInterface
      * @throws DecodingExceptionInterface
      * @throws ClientExceptionInterface
      */
-    public function testScrape()
+    public function testScrape(): void
     {
 
         $responseArray = array(

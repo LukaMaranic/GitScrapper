@@ -5,7 +5,10 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\RegistrationFormType;
 use App\Security\EmailVerifier;
+use App\Service\GenericConversionService;
 use Doctrine\ORM\EntityManagerInterface;
+use InvalidArgumentException;
+use PHPUnit\Util\Exception;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,33 +20,39 @@ use Symfony\Component\Mime\Email;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
-use function Composer\Autoload\includeFile;
 
 class RegistrationController extends AbstractController
 {
-    private EmailVerifier $emailVerifier;
-
-    public function __construct(EmailVerifier $emailVerifier)
-    {
-        $this->emailVerifier = $emailVerifier;
-    }
 
     /**
      * @throws TransportExceptionInterface
      */
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager, MailerInterface $mailer): Response
+    public function register(Request $request,
+                             UserPasswordHasherInterface $userPasswordHasher,
+                             EntityManagerInterface $entityManager,
+                             MailerInterface $mailer,
+                             GenericConversionService $genericConversionService
+    ): Response
     {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
+        $mixedValue = $form->get('plainPassword')->getData();
+        try {
+            $plainPassword = $genericConversionService->handleMixedToString($mixedValue) ;
+        } catch (InvalidArgumentException $exception) {
+            throw new Exception($exception->getMessage());
+        }
+
 
         if ($form->isSubmitted() && $form->isValid()) {
             // encode the plain password
+            $form = $form->get('plainPassword')->getData();
             $user->setPassword(
                 $userPasswordHasher->hashPassword(
                     $user,
-                    $form->get('plainPassword')->getData()
+                    $plainPassword
                 )
             );
             $user->setConfirmationToken(bin2hex(random_bytes(32)));
@@ -53,7 +62,7 @@ class RegistrationController extends AbstractController
 
             $email = (new TemplatedEmail())
                 ->from(new Address('mailer@tvz.com', 'Super Mail Bot'))
-                ->to($user->getEmail())
+                ->to((string)$user->getEmail())
                 ->subject('Please Confirm your Email')
                 ->htmlTemplate('registration/confirmation_email.html.twig')
                 ->context(['signedUrl' => 'http://localhost:8000/confirm-email/' . $user->getConfirmationToken()]);

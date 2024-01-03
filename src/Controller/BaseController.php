@@ -3,9 +3,12 @@
 namespace App\Controller;
 
 use App\Repository\RatingRepository;
+use App\Service\GenericConversionService;
 use App\Service\GitHubTokenService;
 use App\Service\GitIssuesService;
+use PHPUnit\Util\Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Cache\Exception\InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -13,24 +16,15 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class BaseController extends AbstractController
 {
-    private $httpClient;
-    private $ratingRepository;
-    private $gitIssuesService;
-    private $serializer;
+    private GitIssuesService $gitIssuesService;
     private GitHubTokenService $gitHubTokenService;
 
     public function __construct(
-        HttpClientInterface $client,
-        RatingRepository $ratingRepository,
         GitIssuesService $gitIssuesService,
-        SerializerInterface $serializer,
         GitHubTokenService $gitHubTokenService,
     )
     {
-        $this->httpClient = $client;
-        $this->ratingRepository = $ratingRepository;
         $this->gitIssuesService = $gitIssuesService;
-        $this->serializer = $serializer;
         $this->gitHubTokenService = $gitHubTokenService;
     }
     #[Route('/', name: 'token_controller')]
@@ -53,10 +47,16 @@ class BaseController extends AbstractController
     }
 
     #[Route('/search/issues', name: 'issues_controller', methods: ['GET', 'POST'])]
-    public function issue(Request $request): \Symfony\Component\HttpFoundation\Response
+    public function issue(Request $request, GenericConversionService $genericConversionService): \Symfony\Component\HttpFoundation\Response
     {
         $issuesArray = [];
-        $issue = $request->get('search') ?? [];
+        $mixedValue = $request->get('search');
+
+        try {
+            $issue = $genericConversionService->handleMixedToString($mixedValue);
+        } catch (\InvalidArgumentException $exception){
+            throw new Exception($exception->getMessage());
+        }
 
         if ($issue) {
             $issuesArray = $this->gitIssuesService->searchIssues($issue);

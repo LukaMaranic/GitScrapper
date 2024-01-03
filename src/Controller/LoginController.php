@@ -41,8 +41,12 @@ class LoginController extends AbstractController
 //        ]);
 //    }
 
+    /**
+     * @param Security $security
+     * @return Response | null
+     */
     #[Route('/logout', name: 'app_logout')]
-    public function logout(Security $security): Response
+    public function logout(Security $security): Response | null
     {
         return $security->logout();
     }

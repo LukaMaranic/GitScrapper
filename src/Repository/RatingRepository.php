@@ -40,9 +40,10 @@ class RatingRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return Rating[] Returns an array of Rating objects
+     * @param array<int, string> $value
+     * @return mixed
      */
-    public function findByLabelField($value): array
+    public function findByLabelField(array $value): mixed
     {
         return $this->createQueryBuilder('r')
             ->andWhere('r.label = :val')

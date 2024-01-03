@@ -12,25 +12,39 @@ class GitHubTokenService
 
     public function __construct()
     {
-        $this->setToken($_ENV["GIT_TOKEN"] ?? "");
+        $token = "";
+
+        if (isset($_ENV["GIT_TOKEN"])){
+            $token = (string)$_ENV["GIT_TOKEN"];
+        }
+
+//        if (is_scalar($token) OR is_bool($token)) {
+//            $token = (string)$token;
+//        }
+
+        $this->setToken("");
     }
 
+    /**
+     * @param Request $request
+     * @return array<mixed>
+     */
     public function processToken(Request $request): array
     {
 
-        if ($this->getToken() !== null) {
+        if ($this->getToken() !== '') {
             return ['', true];
         }
 
-        $githubToken = $request->request->get('github_token');
+        empty($request->request->get('github_token')) ? $this->setToken('') : $this->setToken((string)$request->request->get('github_token'));
 
-        if (empty($githubToken)) {
-            return [TokenMessages::TOKEN_EMPTY, false];
+        if (empty($this->getToken())) {
+            return [TokenMessages::TOKEN_EMPTY->value, false];
         }
 
         // Additional logic for processing the GitHub token if needed
 
-        return [TokenMessages::TOKEN_SUCCESS, true];
+        return [TokenMessages::TOKEN_SUCCESS->value, true];
     }
 
     /**

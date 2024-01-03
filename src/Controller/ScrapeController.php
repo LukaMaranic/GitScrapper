@@ -19,14 +19,14 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class ScrapeController extends AbstractController
 {
-    private $httpClient;
-    private $ratingRepository;
-
-    public function __construct(private HttpClientInterface $client, RatingRepository $ratingRepository)
-    {
-        $this->httpClient = $client;
-        $this->ratingRepository = $ratingRepository;
-    }
+//    private $httpClient;
+//    private $ratingRepository;
+//
+//    public function __construct(private HttpClientInterface $client, RatingRepository $ratingRepository)
+//    {
+//        $this->httpClient = $client;
+//        $this->ratingRepository = $ratingRepository;
+//    }
 
 
     /**
