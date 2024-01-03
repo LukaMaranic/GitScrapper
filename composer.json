@@ -53,6 +53,9 @@
         "symfony/polyfill-php81": "*"
     },
     "scripts": {
+        "analyse": [
+            "vendor/bin/phpstan analyse"
+        ],
         "auto-scripts": {
             "cache:clear": "symfony-cmd",
             "assets:install %PUBLIC_DIR%": "symfony-cmd"
@@ -74,6 +77,7 @@
         }
     },
     "require-dev": {
+        "phpstan/phpstan": "^1.10",
         "phpunit/phpunit": "^9.5",
         "symfony/browser-kit": "6.3.*",
         "symfony/css-selector": "6.3.*",
