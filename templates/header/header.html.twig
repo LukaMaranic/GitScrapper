@@ -3,6 +3,12 @@
         <li class="nav-item">
             <a class="nav-link active" href="/" style="color: white;">Home</a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="/repositories" style="color: white;">Repositories</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="/search" style="color: white;">Search</a>
+        </li>
         <li class="nav-item" style="margin-left: auto;">
             <a class="nav-link" style="color: white; display: inline-block;" href="#">{{ app.user.email }}</a>
             <a class="nav-link" style="color: white; display: inline-block;" href="{{ path('app_logout', {'_csrf_token': csrf_token('logout')}) }}">Logout</a>
@@ -16,4 +22,29 @@
                 <a class="nav-link" style="color: white; display: inline-block;" href="#"></a>
     {% endif %}
 </ul>
+{#<ul class="nav navbar">#}
+{#    {% if app.user %}#}
+{#        <li class="nav-item">#}
+{#            <a class="nav-link active" href="{{ path('home') }}" style="color: white;">Home</a>#}
+{#        </li>#}
+{#        <li class="nav-item">#}
+{#            <a class="nav-link active" href="{{ path('user_repositories_controller') }}" style="color: white;">Repositories</a>#}
+{#        </li>#}
+{#        <li class="nav-item">#}
+{#            <a class="nav-link active" href="{{ path('search_controller') }}" style="color: white;">Search</a>#}
+{#        </li>#}
+{#        <li class="nav-item ml-auto">#}
+{#            <a class="nav-link" style="color: white; display: inline-block;" href="#">{{ app.user.email }}</a>#}
+{#            <a class="nav-link" style="color: white; display: inline-block;" href="{{ path('app_logout', {'_csrf_token': csrf_token('logout')}) }}">Logout</a>#}
+{#        </li>#}
+{#    {% else %}#}
+{#        <li class="nav-item">#}
+{#            <a class="nav-link active" href="#" style="color: white;">Placeholder</a>#}
+{#        </li>#}
+{#        <li class="nav-item ml-auto">#}
+{#            <a class="nav-link" style="color: white; display: inline-block;" href="#">Guest</a>#}
+{#            <a class="nav-link" style="color: white; display: inline-block;" href="#">Login</a>#}
+{#        </li>#}
+{#    {% endif %}#}
+{#</ul>#}
 

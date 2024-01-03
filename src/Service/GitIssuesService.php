@@ -51,4 +51,20 @@ class GitIssuesService implements GitSearchInterface
 
         return $response->toArray()['items'];
     }
+
+    public function getAuthenticatedUserRepos(): array
+    {
+        $response = $this->client->request(
+            'GET',
+            'https://api.github.com/user/repos',
+            [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $_ENV['GIT_TOKEN'],
+                    'Accept' => 'application/json',
+                ],
+            ]
+        );
+
+        return $response->toArray();
+    }
 }

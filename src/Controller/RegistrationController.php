@@ -10,12 +10,14 @@ use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
+use function Composer\Autoload\includeFile;
 
 class RegistrationController extends AbstractController
 {
@@ -26,6 +28,9 @@ class RegistrationController extends AbstractController
         $this->emailVerifier = $emailVerifier;
     }
 
+    /**
+     * @throws TransportExceptionInterface
+     */
     #[Route('/register', name: 'app_register')]
     public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager, MailerInterface $mailer): Response
     {
@@ -41,23 +46,17 @@ class RegistrationController extends AbstractController
                     $form->get('plainPassword')->getData()
                 )
             );
+            $user->setConfirmationToken(bin2hex(random_bytes(32)));
 
             $entityManager->persist($user);
             $entityManager->flush();
 
-            // generate a signed url and email it to the user
-//            $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
-//                (new TemplatedEmail())
-//                    ->from(new Address('mailer@tvz.com', 'Super Mail Bot'))
-//                    ->to($user->getEmail())
-//                    ->subject('Please Confirm your Email')
-//                    ->htmlTemplate('registration/confirmation_email.html.twig')
-//            );
-            $email = (new Email())
+            $email = (new TemplatedEmail())
                 ->from(new Address('mailer@tvz.com', 'Super Mail Bot'))
                 ->to($user->getEmail())
                 ->subject('Please Confirm your Email')
-                ->html('registration/confirmation_email.html.twig');
+                ->htmlTemplate('registration/confirmation_email.html.twig')
+                ->context(['signedUrl' => 'http://localhost:8000/confirm-email/' . $user->getConfirmationToken()]);
 
             $mailer->send($email);
             // do anything else you need here, like send an email
@@ -70,23 +69,24 @@ class RegistrationController extends AbstractController
         ]);
     }
 
-    #[Route('/verify/email', name: 'app_verify_email')]
-    public function verifyUserEmail(Request $request): Response
+    #[Route('/confirm-email/{token}', name: 'app_verify_email')]
+    public function verifyUserEmail(Request $request, EntityManagerInterface $entityManager): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $token = $request->get('token');
 
-        // validate email confirmation link, sets User::isVerified=true and persists
-        try {
-            $this->emailVerifier->handleEmailConfirmation($request, $this->getUser());
-        } catch (VerifyEmailExceptionInterface $exception) {
-            $this->addFlash('verify_email_error', $exception->getReason());
+        // Retrieve the user based on the confirmation token
+        $user = $entityManager->getRepository(User::class)->findOneBy(['confirmationToken' => $token]);
 
-            return $this->redirectToRoute('app_register');
+        if (!$user) {
+            // Handle the case where the user is not found or token is invalid
+            throw $this->createNotFoundException('Invalid confirmation token or user not found.');
         }
 
-        // @TODO Change the redirect on success and handle or remove the flash message in your templates
-        $this->addFlash('success', 'Your email address has been verified.');
+        $user->setConfirmationToken(null);
+        $user->setIsVerified(true);
 
-        return $this->redirectToRoute('app_register');
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_login', ['verified' => true]);
     }
 }

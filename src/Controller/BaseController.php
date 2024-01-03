@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Repository\RatingRepository;
+use App\Service\GitHubTokenService;
 use App\Service\GitIssuesService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,25 +17,46 @@ class BaseController extends AbstractController
     private $ratingRepository;
     private $gitIssuesService;
     private $serializer;
+    private GitHubTokenService $gitHubTokenService;
 
-    public function __construct(private HttpClientInterface $client, RatingRepository $ratingRepository, GitIssuesService $gitIssuesService, SerializerInterface $serializer)
+    public function __construct(
+        HttpClientInterface $client,
+        RatingRepository $ratingRepository,
+        GitIssuesService $gitIssuesService,
+        SerializerInterface $serializer,
+        GitHubTokenService $gitHubTokenService,
+    )
     {
         $this->httpClient = $client;
         $this->ratingRepository = $ratingRepository;
         $this->gitIssuesService = $gitIssuesService;
         $this->serializer = $serializer;
+        $this->gitHubTokenService = $gitHubTokenService;
     }
-    #[Route('/', name: 'homepage_controller')]
-    public function homePage(): \Symfony\Component\HttpFoundation\Response
+    #[Route('/', name: 'token_controller')]
+    public function homePage(Request $request): \Symfony\Component\HttpFoundation\Response
     {
-        return $this->render('homepage.html.twig', ['title' => 'GitHub API']);
+        list($responseMessage, $isProcessed)  = $this->gitHubTokenService->processToken($request);
+
+        return $this->render('homePage.html.twig', [
+            'title' => 'GitHub API',
+            'responseMessage' => $responseMessage,
+            'isProcessed' => $isProcessed,
+        ]);
     }
 
-    #[Route('/issues', name: 'issues_controller', methods: ['GET', 'POST'])]
+
+    #[Route('/search', name: 'search_controller')]
+    public function searchPage(): \Symfony\Component\HttpFoundation\Response
+    {
+        return $this->render('searchPage.html.twig', ['title' => 'GitHub API']);
+    }
+
+    #[Route('/search/issues', name: 'issues_controller', methods: ['GET', 'POST'])]
     public function issue(Request $request): \Symfony\Component\HttpFoundation\Response
     {
         $issuesArray = [];
-        $issue = $_POST['search'] ?? [];
+        $issue = $request->get('search') ?? [];
 
         if ($issue) {
             $issuesArray = $this->gitIssuesService->searchIssues($issue);
@@ -43,7 +65,7 @@ class BaseController extends AbstractController
         return $this->render('issues.html.twig', ['issues' => $issuesArray]);
     }
 
-    #[Route('/user', name: 'users_controller', methods: ['GET', 'POST'])]
+    #[Route('/search/user', name: 'users_controller', methods: ['GET', 'POST'])]
     public function commit(Request $request): \Symfony\Component\HttpFoundation\Response
     {
         $userArray = [];
@@ -56,7 +78,7 @@ class BaseController extends AbstractController
         return $this->render('user.html.twig', ['users' => $userArray]);
     }
 
-    #[Route('/repositories', name: 'repositories_controller', methods: ['GET', 'POST'])]
+    #[Route('/search/repositories', name: 'repositories_controller', methods: ['GET', 'POST'])]
     public function repository(Request $request): \Symfony\Component\HttpFoundation\Response
     {
         $repositoriesArray= [];
@@ -67,6 +89,22 @@ class BaseController extends AbstractController
         }
 
         return $this->render('repositories.html.twig', ['repositories' => $repositoriesArray]);
+    }
+
+    #[Route('/repositories', name: 'user_repositories_controller', methods: ['GET'])]
+    public function userRepository(Request $request): \Symfony\Component\HttpFoundation\Response
+    {
+        $repositoriesArray = $this->gitIssuesService->getAuthenticatedUserRepos();
+
+        return $this->render('userRepositories.html.twig', ['repositories' => $repositoriesArray]);
+    }
+
+    #[Route('/userRepositories/{id}', name: 'user_single_repositories_controller', methods: ['GET'])]
+    public function userSingleRepository(Request $request): \Symfony\Component\HttpFoundation\Response
+    {
+        $repositoriesArray = $this->gitIssuesService->getAuthenticatedUserRepos();
+
+        return $this->render('userRepositories.html.twig', ['repositories' => $repositoriesArray]);
     }
 
 

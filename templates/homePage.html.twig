@@ -1,0 +1,36 @@
+{% extends "base.html.twig" %}
+
+{% block title %}
+    <div class="container mt-5 text-center">
+        <h1 class="display-4 margin-bottom">Explore GitHub API</h1>
+    </div>
+{% endblock %}
+
+{% block body %}
+    <!-- Main Content -->
+    <div class="container mt-5 text-center">
+
+        <!-- Customized Navigation -->
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="tab-content" id="nav-tabContent">
+                    <!-- Section with Token Form -->
+                    <div class="tab-pane fade show active" id="tokenSection" role="tabpanel" aria-labelledby="list-token-list">
+                        <h2 style="color: #6c757d;">Enter Your GitHub Token</h2>
+                        {% if isProcessed and responseMessage != '' %}
+                            <div class="alert alert-success mt-3" role="alert">{{ responseMessage }}</div>
+                        {% elseif responseMessage != '' %}
+                            <div class="alert alert-danger mt-3" role="alert">{{ responseMessage }}</div>
+                        {% endif %}
+                        <form action="{{ path('token_controller') }}" method="post" class="mt-3">
+                            <div class="mb-3">
+                                <input type="text" name="github_token" class="form-control" placeholder="Enter your GitHub token" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
