@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\Implementation;
 
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;

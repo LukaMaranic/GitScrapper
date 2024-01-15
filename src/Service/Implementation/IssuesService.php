@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\Implementation;
 
-use App\Service\Interface\GitSearchInterface;
+use App\Service\Interface\SearchInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class GitIssuesService implements GitSearchInterface
+class IssuesService implements SearchInterface
 {
     public function __construct(
         private readonly HttpClientInterface $client,

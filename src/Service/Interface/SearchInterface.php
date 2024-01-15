@@ -2,7 +2,7 @@
 
 namespace App\Service\Interface;
 
-interface GitSearchInterface
+interface SearchInterface
 {
     /**
      * @param string|null $issue

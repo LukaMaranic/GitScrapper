@@ -8,12 +8,14 @@
 
 {% block body %}
     <div class="container mt-5 text-center">
-
         <div class="container">
             <ul class="list-group">
                 {% for repository in repositories %}
                     <li class="list-group-item">
-                        <a href="{{ path('user_single_repositories_controller', {'id': repository.id}) }}">
+                        <a href="{{ path('user_single_repositories_controller', {
+                            'full_name': repository.full_name,
+                            'owner_url': repository.owner.html_url
+                        }) }}">
                             <strong> Full name: {{ repository.full_name }}</strong>
                             <p> Url: {{ repository.html_url }}</p>
                             <p> Owner url: {{ repository.owner.html_url }}</p>
@@ -22,6 +24,5 @@
                 {% endfor %}
             </ul>
         </div>
-
     </div>
 {% endblock %}
