@@ -2,30 +2,32 @@
 
 namespace App\Controller;
 
-use App\Repository\RatingRepository;
-use App\Service\GenericConversionService;
-use App\Service\GitHubTokenService;
-use App\Service\GitIssuesService;
+use App\Service\Implementation\CommitService;
+use App\Service\Implementation\GenericConversionService;
+use App\Service\Implementation\IssuesService;
+use App\Service\Implementation\RepositoryService;
+use App\Service\Implementation\StringManipulationService;
+use App\Service\Implementation\TokenService;
 use PHPUnit\Util\Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Cache\Exception\InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class BaseController extends AbstractController
 {
-    private GitIssuesService $gitIssuesService;
-    private GitHubTokenService $gitHubTokenService;
+    private IssuesService $gitIssuesService;
+    private TokenService $gitHubTokenService;
+    private RepositoryService $gitHubRepositoriesService;
 
     public function __construct(
-        GitIssuesService $gitIssuesService,
-        GitHubTokenService $gitHubTokenService,
+        IssuesService     $gitIssuesService,
+        TokenService      $gitHubTokenService,
+        RepositoryService $gitHubRepositoriesService,
     )
     {
         $this->gitIssuesService = $gitIssuesService;
         $this->gitHubTokenService = $gitHubTokenService;
+        $this->gitHubRepositoriesService = $gitHubRepositoriesService;
     }
     #[Route('/', name: 'token_controller')]
     public function homePage(Request $request): \Symfony\Component\HttpFoundation\Response
@@ -55,7 +57,8 @@ class BaseController extends AbstractController
         try {
             $issue = $genericConversionService->handleMixedToString($mixedValue);
         } catch (\InvalidArgumentException $exception){
-            throw new Exception($exception->getMessage());
+//            throw new Exception($exception->getMessage());
+            $issue = false;
         }
 
         if ($issue) {
@@ -91,7 +94,7 @@ class BaseController extends AbstractController
         return $this->render('repositories.html.twig', ['repositories' => $repositoriesArray]);
     }
 
-    #[Route('/repositories', name: 'user_repositories_controller', methods: ['GET'])]
+    #[Route('/user/repositories', name: 'user_repositories_controller', methods: ['GET'])]
     public function userRepository(Request $request): \Symfony\Component\HttpFoundation\Response
     {
         $repositoriesArray = $this->gitIssuesService->getAuthenticatedUserRepos();
@@ -99,13 +102,29 @@ class BaseController extends AbstractController
         return $this->render('userRepositories.html.twig', ['repositories' => $repositoriesArray]);
     }
 
-    #[Route('/userRepositories/{id}', name: 'user_single_repositories_controller', methods: ['GET'])]
-    public function userSingleRepository(Request $request): \Symfony\Component\HttpFoundation\Response
+    #[Route('/user/repositories}', name: 'user_single_repositories_controller', methods: ['GET'])]
+    public function userRepositories(
+        Request                   $request,
+        StringManipulationService $stringManipulationService,
+        CommitService             $gitHubCommitService,
+    ): \Symfony\Component\HttpFoundation\Response
     {
-        $repositoriesArray = $this->gitIssuesService->getAuthenticatedUserRepos();
+        $fullName = $request->query->get('full_name');
+        $parts = explode('/', $fullName);
+        $fullName = end($parts);
 
-        return $this->render('userRepositories.html.twig', ['repositories' => $repositoriesArray]);
+        $ownerUrl = $request->query->get('owner_url');
+
+        $partsToRemove = ['https://github.com/'];
+
+        $fullName = $stringManipulationService->removePartsFromString($fullName, $partsToRemove);
+        $ownerUrl = $stringManipulationService->removePartsFromString($ownerUrl, $partsToRemove);
+
+        $branchesArray = $this->gitHubRepositoriesService->getBranches($ownerUrl, $fullName);
+        $commitsArray = $gitHubCommitService->getCommits($ownerUrl, $fullName);
+        $dataArray = ['repositoryTitle' => $fullName, 'branches' => $branchesArray];
+
+        return $this->render('singleRepository.html.twig', ['data' => $dataArray, 'commits' => $commitsArray, 'branches' => $branchesArray]);
     }
-
 
 }

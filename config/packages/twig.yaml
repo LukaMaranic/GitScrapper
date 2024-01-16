@@ -1,5 +1,9 @@
 twig:
     default_path: '%kernel.project_dir%/templates'
+    debug: '%kernel.debug%'
+    strict_variables: '%kernel.debug%'
+    auto_reload: '%kernel.debug%'
+    cache: '%kernel.cache_dir%/twig'
 
 when@test:
     twig:

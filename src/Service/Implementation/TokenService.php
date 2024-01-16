@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\Implementation;
 
 use App\Enum\TokenMessages;
 use Symfony\Component\HttpFoundation\Request;
 
-class GitHubTokenService
+class TokenService
 {
     private string $response;
     private string $token;

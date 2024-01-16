@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\Implementation;
 
+use App\Service\Interface\ConversionServiceInterface;
 use InvalidArgumentException;
 
 class GenericConversionService implements ConversionServiceInterface
