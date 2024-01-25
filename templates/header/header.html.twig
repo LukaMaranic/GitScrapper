@@ -6,13 +6,24 @@
         <li class="nav-item">
             <a class="nav-link active" href="{{ path('user_repositories_controller') }}" style="color: white;">Repositories</a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link active" href="{{ path('search_controller') }}" style="color: white;">Search</a>
+{#        <li class="nav-item">#}
+{#            <a class="nav-link active" href="{{ path('search_controller') }}" style="color: white;">Search</a>#}
+{#        </li>#}
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="{{ path('search_controller') }}" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: white;">
+                Search
+            </a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="{{ path('issues_controller') }}">GitHub Issues</a></li>
+                <li><a class="dropdown-item" href="{{ path('users_controller') }}">GitHub Users</a></li>
+                <li><a class="dropdown-item" href="{{ path('repositories_controller') }}">GitHub Repositories</a></li>
+            </ul>
         </li>
         <li class="nav-item" style="margin-left: auto;">
             <a class="nav-link" style="color: white; display: inline-block;" href="#">{{ app.user.email }}</a>
             <a class="nav-link" style="color: white; display: inline-block;" href="{{ path('app_logout', {'_csrf_token': csrf_token('logout')}) }}">Logout</a>
         </li>
+
         {% else %}
             <li class="nav-item">
                 <a class="nav-link active" href="#" style="color: white;"></a>

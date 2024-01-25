@@ -15,17 +15,19 @@
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
 
-        <div class="container">
-            <ul class="list-group">
-                {% for user in users %}
-                    <li class="list-group-item">
-                        <strong> Name: {{ user.name }}</strong>
-                        <p> Url: {{ user.html_url }}</p>
-                        <p> Repos url: {{ user.repos_url }}</p>
-                    </li>
-                {% endfor %}
-            </ul>
+    <div class="container mt-5 text-center">
+        <div class="d-flex flex-wrap">
+            {% for user in users %}
+                <div class="card m-2" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ user.name }}</h5>
+                        {#                <h6 class="card-subtitle mb-2 text-body-secondary">{{ issue.user.url }}</h6> #}
+{#                        <p class="card-text">{{ issue.body }}</p>#}
+                        <a href="#" class="card-link">{{ user.html_url }}</a>
+                        <a href="#" class="card-link">{{ user.repos_url }}</a>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
-
     </div>
 {% endblock %}

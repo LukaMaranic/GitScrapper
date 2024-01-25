@@ -8,21 +8,30 @@
 
 {% block body %}
     <div class="container mt-5 text-center">
-        <div class="container">
-            <ul class="list-group">
+        <div class="d-flex flex-wrap">
                 {% for repository in repositories %}
-                    <li class="list-group-item">
-                        <a href="{{ path('user_single_repositories_controller', {
-                            'full_name': repository.full_name,
-                            'owner_url': repository.owner.html_url
-                        }) }}">
-                            <strong> Full name: {{ repository.full_name }}</strong>
-                            <p> Url: {{ repository.html_url }}</p>
-                            <p> Owner url: {{ repository.owner.html_url }}</p>
-                        </a>
-                    </li>
+                    <div class="card m-2" style="width: 18rem;">
+                        <img class="card-img-top" src="{{ repository.owner.avatar_url }}" alt="Card image cap">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ repository.full_name }}</h5>
+                            <p class="card-text"> {{ repository.owner.html_url }}</p>
+                            <a class="btn btn-primary" href="{{ path('user_single_repositories_controller', {
+                                'full_name': repository.full_name,
+                                'owner_url': repository.owner.html_url
+                            }) }}">Inspect</a>
+                        </div>
+                    </div>
                 {% endfor %}
-            </ul>
         </div>
     </div>
 {% endblock %}
+{#                    <li class="list-group-item">#}
+{#                        <a href="{{ path('user_single_repositories_controller', {#}
+{#                            'full_name': repository.full_name,#}
+{#                            'owner_url': repository.owner.html_url#}
+{#                        }) }}">#}
+{#                            <strong> Full name: {{ repository.full_name }}</strong>#}
+{#                            <p> Url: {{ repository.html_url }}</p>#}
+{#                            <p> Owner url: {{ repository.owner.html_url }}</p>#}
+{#                        </a>#}
+{#                    </li>#}

@@ -14,19 +14,20 @@
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
-
-        <div class="container">
-            <ul class="list-group">
-                {% for issue in issues %}
-                    <li class="list-group-item">
-                        <strong> Title: {{ issue.title }}</strong>
-                        <p> Url: {{ issue.html_url }}</p>
-                        <p> User: {{ issue.user.url }}</p>
-{#                        <p> Body: {{ issue.body }}</p>#}
-                    </li>
-                {% endfor %}
-            </ul>
+    </div>
+    <div class="container mt-5 text-center">
+        <div class="d-flex flex-wrap">
+            {% for issue in issues %}
+                <div class="card m-2" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ issue.title }}</h5>
+                        {#                <h6 class="card-subtitle mb-2 text-body-secondary">{{ issue.user.url }}</h6> #}
+                        <p class="card-text">{{ issue.body }}</p>
+                        <a href="#" class="card-link">{{ issue.user.url }}</a>
+                        <a href="#" class="card-link">{{ issue.html_url }}</a>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
-
     </div>
 {% endblock %}

@@ -5,13 +5,20 @@ namespace App\Controller;
 use App\Service\Implementation\CommitService;
 use App\Service\Implementation\GenericConversionService;
 use App\Service\Implementation\IssuesService;
+use App\Service\Implementation\PullRequestService;
 use App\Service\Implementation\RepositoryService;
 use App\Service\Implementation\StringManipulationService;
 use App\Service\Implementation\TokenService;
+use App\Service\Implementation\UserService;
 use PHPUnit\Util\Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class BaseController extends AbstractController
 {
@@ -102,11 +109,20 @@ class BaseController extends AbstractController
         return $this->render('userRepositories.html.twig', ['repositories' => $repositoriesArray]);
     }
 
+    /**
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws ClientExceptionInterface
+     */
     #[Route('/user/repositories}', name: 'user_single_repositories_controller', methods: ['GET'])]
     public function userRepositories(
         Request                   $request,
         StringManipulationService $stringManipulationService,
         CommitService             $gitHubCommitService,
+        PullRequestService        $pullRequestService,
+        UserService               $userService,
     ): \Symfony\Component\HttpFoundation\Response
     {
         $fullName = $request->query->get('full_name');
@@ -122,9 +138,11 @@ class BaseController extends AbstractController
 
         $branchesArray = $this->gitHubRepositoriesService->getBranches($ownerUrl, $fullName);
         $commitsArray = $gitHubCommitService->getCommits($ownerUrl, $fullName);
-        $dataArray = ['repositoryTitle' => $fullName, 'branches' => $branchesArray];
+        $pullRequestArray = $pullRequestService->getPullRequests($ownerUrl, $fullName);
+        $userArray = $userService->getUser($ownerUrl);
+        $dataArray = ['repositoryTitle' => $fullName];
 
-        return $this->render('singleRepository.html.twig', ['data' => $dataArray, 'commits' => $commitsArray, 'branches' => $branchesArray]);
+        return $this->render('singleRepository.html.twig', ['data' => $dataArray, 'commits' => $commitsArray, 'branches' => $branchesArray, 'pulls' => $pullRequestArray]);
     }
 
 }

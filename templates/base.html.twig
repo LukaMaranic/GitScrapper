@@ -11,24 +11,24 @@
     <!-- Custom CSS for Colors -->
     <style>
         body {
-            background-color: #f0f0f0; /* Light gray background */
+            background-color: #f0f0f0;
         }
         .navbar {
-            background-color: #3498db; /* Blue navbar */
+            background-color: #3498db;
             color: #0000
         }
         .navbar > a {
             color: #ffffff
         }
         h1 {
-            color: #3498db; /* Blue title text */
+            color: #3498db;
         }
         .list-group-item.active {
-            background-color: #3498db; /* Blue active item in the table of contents */
+            background-color: #3498db;
             border-color: #3498db;
         }
         .list-group-item {
-            background-color: #f0f0f0; /* Light gray item in the table of contents */
+            background-color: #f0f0f0;
         }
         .margin-bottom {
             margin-bottom: 2em;
@@ -37,7 +37,6 @@
 </head>
 {% endblock %}
 <body>
-<!-- Navigation Bar -->
 {% include 'header/header.html.twig' %}
 
 {% block title %}
@@ -49,7 +48,16 @@
 {% block body %}
 {% endblock %}
 
-<!-- Link to Bootstrap JS via CDN -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% block footer %}
+    <footer class="bg-dark text-light text-center py-3 fixed-bottom">
+        <p>&copy; {{ "now"|date("Y") }} Luka Maranić</p>
+    </footer>
+{% endblock %}
+
+{% block js %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+{% endblock %}
+
 </body>
 </html>
